@@ -1,3 +1,4 @@
+from builtins import input
 import sys
 import os
 
@@ -198,7 +199,7 @@ class CLI(object):
         if len(matched_list) == 0:
             return [], []
 
-        max_score = max(map(lambda x: x[1], matched_list))
+        max_score = max([x[1] for x in matched_list])
 
         ret = []
         ret_low = []
@@ -371,7 +372,7 @@ class CLI(object):
     def process_one_line(self):
         if self.interactive:
             try:
-                line = raw_input(self.get_prompt())
+                line = input(self.get_prompt())
             except KeyboardInterrupt:
                 self.fout.write('\n')
                 return

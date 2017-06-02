@@ -1,7 +1,7 @@
 import re
 import tokenize
 import parser
-from StringIO import StringIO
+from io import StringIO    # for handling unicode strings
 
 '''
 <BESS script language>

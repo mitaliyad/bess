@@ -1,3 +1,6 @@
+from __future__ import print_function
+from future.utils import iteritems
+from builtins import input
 import os
 import os.path
 import sys
@@ -24,7 +27,7 @@ try:
     from module import *
     from port import *
 except ImportError:
-    print >> sys.stderr, 'Cannot import the API module (libbess-python)'
+    print('Cannot import the API module (libbess-python)', file=sys.stderr)
     raise
 
 
@@ -62,8 +65,8 @@ def __bess_env__(key, default=None):
         if default is None:
             raise ConfError('Environment variable "%s" must be set.')
 
-        print 'Environment variable "%s" is not set. \
-            Using default value "%s"' % (key, default)
+        print('Environment variable "%s" is not set. \
+              Using default value "%s"' % (key, default))
         return default
 
 
@@ -545,7 +548,7 @@ def warn(cli, msg, func, *args):
             cli.rl.set_completer(cli.complete_dummy)
 
         try:
-            resp = raw_input('WARNING: %s Are you sure? (type "yes") ' % msg)
+            resp = input('WARNING: %s Are you sure? (type "yes") ' % msg)
 
             if resp.strip() == 'yes':
                 func(cli, *args)
@@ -742,13 +745,13 @@ def _run_file(cli, conf_file, env_map):
         try:
             original_env = copy.copy(os.environ)
 
-            for k, v in env_map.iteritems():
+            for k, v in iteritems(env_map):
                 os.environ[k] = str(v)
 
             _do_run_file(cli, conf_file)
         finally:
             os.environ.clear()
-            for k, v in original_env.iteritems():
+            for k, v in iteritems(original_env):
                 os.environ[k] = v
     else:
         _do_run_file(cli, conf_file)
@@ -933,7 +936,7 @@ def _limit_to_str(limit):
 
 def _burst_to_str(burst):
     # no output if max_burst is not set
-    if len(burst.values()) == 0 or burst.values()[0] == 0:
+    if len(burst) == 0 or list(burst.values())[0] == 0:
         return ''
 
     if 'count' in burst:
@@ -1044,10 +1047,10 @@ def check_constraints(cli):
 
 
 def _show_tc_list(cli, tcs):
-    wids = sorted(list(set(map(lambda tc: getattr(tc, 'class').wid, tcs))))
+    wids = sorted(list(set([getattr(tc, 'class').wid for tc in tcs])))
 
     for wid in wids:
-        matched = filter(lambda tc: getattr(tc, 'class').wid == wid, tcs)
+        matched = [tc for tc in tcs if getattr(tc, 'class').wid == wid]
 
         root = _build_tcs_tree(matched)
         if wid == -1:
@@ -1558,8 +1561,8 @@ def _monitor_ports(cli, *ports):
 
             if len(ports) > 1:
                 print_delta('Total', get_delta(
-                    get_total(last.values()),
-                    get_total(now.values())))
+                    get_total(list(last.values())),
+                    get_total(list(now.values()))))
 
             for port in ports:
                 last[port] = now[port]

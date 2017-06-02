@@ -1,3 +1,4 @@
+from __future__ import print_function
 import fnmatch
 import os
 import shlex
@@ -11,7 +12,7 @@ try:
     sys.path.insert(1, '%s/../libbess-python' % this_dir)
     from bess import *
 except ImportError:
-    print >> sys.stderr, 'Cannot import the API module (libbess-python)'
+    print('Cannot import the API module (libbess-python)', file=sys.stderr)
     raise
 
 
